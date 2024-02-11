@@ -1,5 +1,4 @@
-"""Main function for Extract/Transform portion of the pipeline.
-The main function contains many little sub-functions"""
+"""The solution to the providers problem using pySpark (of Spark framework) """
 
 import sys
 import os
@@ -16,7 +15,7 @@ sc = SparkContext(conf=SparkConf().setAppName("videos"))
 sqlContext = SQLContext(sc)
 spark= SparkSession.builder.appName("videos").getOrCreate() 
 
-#set up data parameters
+#set up input data
 visits='visits.csv'
 providers='providers.csv'
 visits_csv=pd.read_csv(visits,delimiter=',', header=None)
@@ -30,6 +29,7 @@ df1=pd.merge(providers_df,visits_df1, on='provider_id')
 #df1=df1.iloc[:80]
 
 def partitionBy_specialty(df):
+    """The solution to the first problem where the output is the json file of the total visits to each provider"""
     total=[]
     a=0
     c=0
@@ -51,6 +51,7 @@ def partitionBy_specialty(df):
     df1.write.format('json').option('header',True).partitionBy('provider_specialty').mode('append').save("provider_byspecialty.json")
 
 def partitionBy_month(df1):
+    """The solution to the second problem where the output is the json file of the total visits to each provider by month"""
     month=[]
     mix=[]
     for index, row in df1.iterrows():
